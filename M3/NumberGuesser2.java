@@ -40,10 +40,12 @@ public class NumberGuesser2 {
                     break;
                 }
 
-                //6. Add a hint command that can be used once per level and only after 2 strikes have been used that reduces the range around the correct number (i.e., number is 5 and range is initially 1-15, new range could be 3-8 as a hint)
+                //6. Add a hint command that can be used once per level and only after 2 strikes have been used that'
+                // reduces the range around the correct number (i.e., number is 5 and range is initially 1-15,
+                //new range could be 3-8 as a hint)
                 
                 //mbk28 2/12/2023
-                
+
                 if (message.equalsIgnoreCase("hint")) {
 
                     if(hintsused > 1){
