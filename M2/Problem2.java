@@ -25,7 +25,8 @@ public class Problem2 {
             for(int i = 0; i < arr.length; i++ ){
 
                 total += arr[i];
-
+                total = Math.round(total * 100.0) / 100.0;
+                
             }
 
             //set the double to a string variable
