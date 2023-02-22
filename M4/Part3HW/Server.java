@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
+
 
 public class Server {
     int port = 3001;
@@ -68,7 +71,7 @@ public class Server {
     }
 
     private boolean processCommand(String message, long clientId){
-        System.out.println("Checking command: " + message);
+        System.out.println("Checking Command : " + message);
         if(message.equalsIgnoreCase("disconnect")){
             Iterator<ServerThread> it = clients.iterator();
             while (it.hasNext()) {
@@ -81,8 +84,74 @@ public class Server {
                 }
             }
             return true;
+            
         }
+        else if(message.equalsIgnoreCase("cointoss")){
+
+            System.out.println("From Client: " + message);
+
+            
+            Iterator<ServerThread> it = clients.iterator();
+
+            String[] tossResult = {"Heads", "Tails"};
+
+            while (it.hasNext()) {
+
+                ServerThread client = it.next();
+
+                if(client.getId() == clientId){
+                    
+                    Random rand = new Random();
+
+                    int index = rand.nextInt(2);
+
+                    broadcast("The coin was flipped by " + clientId + " and the result is " + (tossResult[index]), clientId);
+                    
+                    break;
+                }
+            }
+            return true;
+        }
+
+        else if(message.startsWith("randomize ")){
+
+            
+            System.out.println("From Client: " + message);
+
+            Iterator<ServerThread> it = clients.iterator();
+
+            String nocommand = message.substring(10);
+
+            StringBuffer result = new StringBuffer(nocommand);
+
+            int n = result.length();
+
+            Random rand = new Random();
+
+            while (n > 0){
+                int randomPoint = rand.nextInt(n);
+                char randomChar = result.charAt(randomPoint);
+                result.setCharAt(n-1, randomChar);
+                n--;
+            }
+
+            while (it.hasNext()) {
+                ServerThread client = it.next();
+                if(client.getId() == clientId){
+                    
+                    broadcast(clientId + " wanted to randomize the word " + nocommand + " and the result is" + result.toString() , clientId);
+                    
+                    break;
+                }
+        }
+
+    }
+
+
+
+
         return false;
+        
     }
     public static void main(String[] args) {
         System.out.println("Starting Server");
