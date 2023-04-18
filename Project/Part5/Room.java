@@ -3,12 +3,16 @@ package Project.Part5;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+
 
 public class Room implements AutoCloseable{
 	protected static Server server;// used to refer to accessible server functions
 	private String name;
 	private List<ServerThread> clients = new ArrayList<ServerThread>();
 	private boolean isRunning = false;
+	
+	
 	// Commands
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
@@ -16,6 +20,8 @@ public class Room implements AutoCloseable{
 	private final static String DISCONNECT = "disconnect";
 	private final static String LOGOUT = "logout";
 	private final static String LOGOFF = "logoff";
+	private final static String FLIP = "flip";
+	private final static String ROLL = "roll";
 
 	public Room(String name) {
 		this.name = name;
@@ -114,6 +120,13 @@ public class Room implements AutoCloseable{
 					case LOGOFF:
 						Room.disconnectClient(client, this);
 						break;
+					case FLIP:
+						sendMessage(client, Flip());
+						break;
+					case ROLL:
+						int n = Integer.valueOf(comm2[1]);
+						roll(client,n);
+					 break;
 					default:
 						wasCommand = false;
 						break;
@@ -147,6 +160,39 @@ public class Room implements AutoCloseable{
 		client.disconnect();
 		room.removeClient(client);
 	}
+
+	//mbk28 4/12/23
+	public String Flip(){
+        int face = 0;
+        String HoT;
+
+        Random rand = new Random();
+        face = rand.nextInt(1);
+        
+        if(face == 0)
+            HoT = "Heads!";
+        
+        else
+            HoT = "Tails!";
+        
+        return HoT;
+        
+    }
+    //mbk28 4/12/23
+    protected synchronized void roll(ServerThread sender, int number)
+	{
+		Random rand = new Random();
+		int num = rand.nextInt(number);
+		String message = "Your Number is "+ num;
+		
+		sendMessage(sender, message);
+
+		Payload p = new Payload();
+        p.setPayloadType(PayloadType.MESSAGE);
+        p.setMessage(message);
+	}
+
+
 	// end command helper methods
 
 	/***
@@ -157,7 +203,8 @@ public class Room implements AutoCloseable{
 	 * @param sender  The client sending the message
 	 * @param message The message to broadcast inside the room
 	 */
-	protected synchronized void sendMessage(ServerThread sender, String message) {
+
+	 protected synchronized void sendMessage(ServerThread sender, String message) {
 		if (!isRunning) {
 			return;
 		}
@@ -166,6 +213,17 @@ public class Room implements AutoCloseable{
 			// it was a command, don't broadcast
 			return;
 		}
+
+		//mbk28 4/12/23
+		if (sender != null && message.contains("**")){
+				message = message.replaceAll("\\*\\*\\b", "<b>").replaceAll("\\b\\*\\*", "</b>");
+			}
+			if (sender != null && message.contains("__")){
+				message = message.replaceAll("\\b__", "<u>").replaceAll("__\\b", "</u>");
+			}
+			if (sender != null && message.contains("^")){
+				message = message.replaceAll("\\^\\b", "<i>").replaceAll("\\b\\^", "</i>");
+			}
 		
 		String from = (sender == null ? "Room" : sender.getClientName());
 		Iterator<ServerThread> iter = clients.iterator();
@@ -177,6 +235,7 @@ public class Room implements AutoCloseable{
 			}
 		}
 	}
+
 	protected synchronized void sendConnectionStatus(ServerThread sender, boolean isConnected){
 		Iterator<ServerThread> iter = clients.iterator();
 		while (iter.hasNext()) {
