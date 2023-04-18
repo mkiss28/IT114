@@ -160,6 +160,8 @@ public class Room implements AutoCloseable{
 		client.disconnect();
 		room.removeClient(client);
 	}
+
+	//mbk28 4/12/23
 	public String Flip(){
         int face = 0;
         String HoT;
@@ -176,7 +178,7 @@ public class Room implements AutoCloseable{
         return HoT;
         
     }
-            
+    //mbk28 4/12/23
     protected synchronized void roll(ServerThread sender, int number)
 	{
 		Random rand = new Random();
