@@ -1,6 +1,6 @@
 <table><tr><td> <em>Assignment: </em> IT114 Chatroom Milestone 2</td></tr>
 <tr><td> <em>Student: </em> Michael Kiss (mbk28)</td></tr>
-<tr><td> <em>Generated: </em> 4/18/2023 4:21:36 PM</td></tr>
+<tr><td> <em>Generated: </em> 4/18/2023 4:26:24 PM</td></tr>
 <tr><td> <em>Grading Link: </em> <a rel="noreferrer noopener" href="https://learn.ethereallab.app/homework/IT114-008-S23/it114-chatroom-milestone-2/grade/mbk28" target="_blank">Grading</a></td></tr></table>
 <table><tr><td> <em>Instructions: </em> <p>Implement the features from Milestone2 from the proposal document:&nbsp; <a href="https://docs.google.com/document/d/1ONmvEvel97GTFPGfVwwQC96xSsobbSbk56145XizQG4/view">https://docs.google.com/document/d/1ONmvEvel97GTFPGfVwwQC96xSsobbSbk56145XizQG4/view</a></p>
 </td></tr></table>
@@ -33,7 +33,7 @@
 </td></tr>
 </table></td></tr>
 <tr><td> <em>Sub-Task 2: </em> Show source message and the result output in the terminal (note, you won't actually see the styles until Milestone3)</td></tr>
-<tr><td><table><tr><td><img width="768px" src="https://user-images.githubusercontent.com/98507798/232894593-f18dafeb-0530-46d5-82ff-855c2b17195c.png first "if" statement checks if the "message" variable contains two consecutive asterisks (**). This code uses the "replaceAll()" method to replace all  that appear after a word boundary ("\b") with an opening "<b>". this code replaces double ** with HTML bold tags."/></td></tr>
+<tr><td><table><tr><td><img width="768px" src="https://user-images.githubusercontent.com/98507798/232894593-f18dafeb-0530-46d5-82ff-855c2b17195c.png"/></td></tr>
 <tr><td> <em>Caption:</em> <p>Results <br></p>
 </td></tr>
 </table></td></tr>
