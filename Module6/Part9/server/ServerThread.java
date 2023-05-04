@@ -198,11 +198,11 @@ public class ServerThread extends Thread {
             case MESSAGE:
                 if (currentRoom != null) {
                     if (p.getMessage().startsWith("/flip")) {
-                        currentRoom.sendMessage(this, "<b>" + flip() + "</b>");
+                        currentRoom.sendMessage(this, "<b>#r#" + flip() + "#r#</b>");
                     }
                     else if (p.getMessage().startsWith("/roll"))
                     {   
-                        currentRoom.sendMessage(this, "<b>" + roll() + "</b>");
+                        currentRoom.sendMessage(this, "<b>#g#" + roll() + "</b>#g#");
                     }
                     else if (p.getMessage().startsWith("@")) {
                         String message = p.getMessage();
