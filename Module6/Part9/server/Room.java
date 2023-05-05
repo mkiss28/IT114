@@ -9,6 +9,13 @@ import java.util.logging.Logger;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
 
 import Module6.Part9.common.Constants;
 import Module6.Part9.common.GeneralUtils;
@@ -17,6 +24,8 @@ public class Room implements AutoCloseable {
 	private String name;
 	private List<ServerThread> clients = Collections.synchronizedList(new ArrayList<ServerThread>());
 	private boolean isRunning = false;
+	private List<String> chatHistory = new ArrayList<>();
+
 	// Commands
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
@@ -28,6 +37,7 @@ public class Room implements AutoCloseable {
 	private final static String UNMUTE = "unmute";
 	private final static String FLIP = "flip";
 	private final static String ROLL = "roll";
+	private final static String EXPORT = "export";
 	
 	private static Logger logger = Logger.getLogger(Room.class.getName());
 	private HashMap<String, String> converter = null;
@@ -121,14 +131,26 @@ public class Room implements AutoCloseable {
 					case LOGOFF:
 						Room.disconnectClient(client, this);
 						break;
+
 					case MUTE:
 						userName = comm2[1];
+						sendMessage(client, userName, client.getClientName() + " has muted you");
 						client.addToMutedList(userName);
 						break;
+
+						
+
 					case UNMUTE:
 						userName = comm2[1];
+						sendMessage(client, userName, client.getClientName() + " has unmuted you");
 						client.removeFromMutedList(userName);
 						break;
+					case EXPORT:
+						userName = comm2[1];
+						sendMessage(client, " has exported the chat to chat_history.txt");
+							exportChatHistory("chat_history.txt");
+						break;
+						
 					case FLIP:
 						sendMessage(client, Flip());
 						break;
@@ -208,6 +230,18 @@ public class Room implements AutoCloseable {
 
 	}
 
+	public synchronized void exportChatHistory(String fileName) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+			for (String message : chatHistory) {
+				writer.write(message);
+				writer.newLine();
+			}
+		} catch (IOException e) {
+			System.err.println("Error exporting chat history to file: " + fileName);
+			e.printStackTrace();
+		}
+	}
+
 	// end command helper methods
 
 	/***
@@ -218,7 +252,13 @@ public class Room implements AutoCloseable {
 	 * @param sender  The client sending the message
 	 * @param message The message to broadcast inside the room
 	 */
+	//mbk28 
 	protected synchronized void sendMessage(ServerThread sender, String message) {
+
+		String formattedMessage = String.format("%s: %s", sender.getClientName(), message);
+    chatHistory.add(formattedMessage);
+
+	
 		if (!isRunning) {
 			return;
 		}
@@ -258,6 +298,10 @@ public class Room implements AutoCloseable {
 	 * @param message The message to broadcast inside the room
 	 */
 	protected synchronized void sendMessage(ServerThread sender, String receiver, String message) {
+
+		String formattedMessage = String.format("%s (private): %s", sender.getClientName(), message);
+    chatHistory.add(formattedMessage);
+	
 		if (!isRunning) {
 			return;
 		}
