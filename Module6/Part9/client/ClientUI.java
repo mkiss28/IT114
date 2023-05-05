@@ -16,8 +16,15 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.concurrent.Callable;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import java.io.File;
+
+import java.util.Set;
+
+
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -47,6 +54,9 @@ public class ClientUI extends JFrame implements IClientEvents {
     private JPanel chatArea = null;
     private JPanel userListArea = null;
     private Card currentCard = Card.CONNECT;
+    private long LSID = Constants.DEFAULT_CLIENT_ID;
+    
+
 
     private String host;
     private int port;
@@ -300,6 +310,7 @@ public class ClientUI extends JFrame implements IClientEvents {
         JTextField textValue = new JTextField();
         input.add(textValue);
         JButton button = new JButton("Send");
+        JButton exportButton = new JButton("Export");
         // lets us submit with the enter key instead of just the button click
         textValue.addKeyListener(new KeyListener() {
 
@@ -326,7 +337,18 @@ public class ClientUI extends JFrame implements IClientEvents {
                 String text = textValue.getText().trim();
                 if (text.length() > 0) {
                     Client.INSTANCE.sendMessage(text);
-                    textValue.setText("");// clear the original text
+
+                        if (text.startsWith("/mute")) {
+                            String username = text.substring(6);
+                            toggleMuteClientName(username);
+                    }
+                        else if (text.startsWith("/unmute")) {
+                            String username = text.substring(8);
+                            toggleMuteClientName(username);
+                    }
+                    textValue.setText("");
+                    
+                    // clear the original text
 
                     // debugging
                     logger.log(Level.FINEST, "Content: " + content.getSize());
@@ -339,8 +361,11 @@ public class ClientUI extends JFrame implements IClientEvents {
                 e1.printStackTrace();
             }
         });
+        
+        
         chatArea = content;
         input.add(button);
+        input.add(exportButton);
         parent.add(createUserListPanel(), BorderLayout.EAST);
         parent.add(input, BorderLayout.SOUTH);
         parent.setName(Card.CHAT.name());
@@ -546,10 +571,12 @@ public class ClientUI extends JFrame implements IClientEvents {
         }
     }
 
+ 
     @Override
     public void onMessageReceive(long clientId, String message) {
         if (currentCard.ordinal() >= Card.CHAT.ordinal()) {
             String clientName = mapClientId(clientId);
+            highlight(clientId);
             addText(String.format("%s: %s", clientName, message));
         }
     }
@@ -558,6 +585,7 @@ public class ClientUI extends JFrame implements IClientEvents {
     public void onReceiveClientId(long id) {
         if (myId == Constants.DEFAULT_CLIENT_ID) {
             myId = id;
+            show(Card.CHAT.name());
         } else {
             logger.log(Level.WARNING, "Received client id after already being set, this shouldn't happen");
         }
@@ -595,5 +623,86 @@ public class ClientUI extends JFrame implements IClientEvents {
         if (currentCard.ordinal() >= Card.CHAT.ordinal()) {
             addText("Joined room " + roomName);
         }
+    }
+
+    private void toggleMuteClientName(String clientName) {
+        logger.log(Level.INFO, "toggling mute for clientName " + clientName);
+        long clientId = getClientIdFromName(clientName);
+        Component[] cs = userListArea.getComponents();
+        for (Component c : cs) {
+            if (c.getName().equals(clientId + "")) {
+                JEditorPane jp = (JEditorPane)(c);
+                if (jp.getBackground().equals(Color.gray)) {
+                    jp.setBackground(new Color(0, 0, 0, 0));  
+                    System.out.println("Unmuting for "  + c.getName());
+                } else {
+                    jp.setBackground(Color.gray);
+                    System.out.println("Muting/graying for "  + c.getName());
+                }
+                jp.setOpaque(true);
+                jp.repaint();
+                break;
+            }
+        }
+        userListArea.repaint();
+    }
+
+    private void highlight(long clientId) {
+        // check if the client ID is the same as the last highlighted client ID
+        if (LSID == clientId) {
+            System.out.println("Same user, nothing to highlight");
+            return;
+        }
+    
+        // if there was a previous highlighted client, unhighlight them
+        if (LSID != Constants.DEFAULT_CLIENT_ID) {
+            System.out.println("Unhighlighting " + LSID);
+            uh(LSID);
+        }
+    
+        // highlight the new client ID
+        logger.log(Level.INFO, "Highlighting clientId " + clientId);
+        LSID = clientId;
+        Component[] cs = userListArea.getComponents();
+        for (Component c : cs) {
+            if (c.getName().equals(clientId + "")) {
+                JEditorPane jp = (JEditorPane)(c);
+                System.out.println("Highlighting for "  + c.getName());
+                jp.setOpaque(true);
+                jp.setBackground(Color.yellow);
+                jp.repaint();
+                break;
+            }
+        }
+        userListArea.repaint();
+    }
+
+    private void uh(long clientId) {
+        logger.log(Level.INFO, "Unhighlighting clientId " + clientId);
+        Component[] cs = userListArea.getComponents();
+        for (Component c : cs) {
+            if (c.getName().equals(clientId + "")) {
+                JEditorPane jp = (JEditorPane)(c);
+                System.out.println("Unhighlighting for " + c.getName());
+                jp.setOpaque(true);
+                jp.setBackground(new Color(0, 0, 0, 0));
+                jp.repaint();
+                break;
+            }
+        }
+        userListArea.repaint();
+    }
+
+    private long getClientIdFromName(String name) {
+        Set<Long> setOfKeys = userList.keySet();
+        System.out.println("getting client id from name " + name);
+ 
+        for (Long key : setOfKeys) {
+            if (userList.get(key).equals(name)){
+                System.out.println("found id " + key.longValue() + " for " + name);
+                return key.longValue();
+            }
+        }
+        return 0;
     }
 }

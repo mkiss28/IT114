@@ -187,7 +187,7 @@ public class ServerThread extends Thread {
             cleanup();
         }
     }
-
+    //mbk28 5/
     void processPayload(Payload p) {
         switch (p.getPayloadType()) {
             case CONNECT:
@@ -255,8 +255,10 @@ public class ServerThread extends Thread {
             }
         return toss;
     }
+    
 
     public void addToMutedList(String name) {
+
         mutedList.add(name);
     }
 
@@ -267,6 +269,7 @@ public class ServerThread extends Thread {
     public void removeFromMutedList(String name) {
         mutedList.remove(name);
     }
+    
 
     private void cleanup() {
         info("Thread cleanup() start");
