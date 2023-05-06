@@ -1,42 +1,9 @@
-Test: Test
-Test: Test
-Test: Test
-Test: Testing
-Test: Hello
-Test2: Hello
-Test: /mute test2
-Test (private): Test has muted you
-Test: /mute Test
-Test (private): Test has muted you
-Test: Fuck
-Test: Testing
-Test: What time is it
-Test: Testing
-Test: What time is it
-Test2: YOYo
-Test2: FUck
-Test2: Fuck
-Test2: /mute Test
-Test2 (private): Test2 has muted you
-Test: wow
-Test: wow
-Test: wow
-Test: wow
-Test: wow
-Test: wow
-Test: as
-Test2: /unmute Test
-Test2 (private): Test2 has unmuted you
-Test: Fuck
-Michael: I am testig the export function
-Michael: /export
-Michael: chat history
-Michael: Idk what to type in here
-Michael: /export
-Michael: /export michael
-Michael:  has exported the chat to chat_history.txt
-Michael: <b>#g#0</b>#g#
-Michael: <b>#r#heads#r#</b>
-Michael: /export
-Michael: /export test
-Michael:  has exported the chat to chat_history.txt
+Teik Lim: /mute Bob Jones
+Teik Lim (private): Teik Lim has muted you
+Bob Jones: Hello
+Bob Jones: /mute Matt Toegel
+Bob Jones (private): Bob Jones has muted you
+Teik Lim: <b>#g#1</b>#g#
+Teik Lim: <b>#r#heads#r#</b>
+Teik Lim: /export test
+Teik Lim:  has exported the chat to chat_history.txt
